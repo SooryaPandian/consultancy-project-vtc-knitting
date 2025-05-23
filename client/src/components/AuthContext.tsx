@@ -1,6 +1,6 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
+import { BACKEND_URL } from '../data/config';
 
 type User = {
   id: string;
@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
       */
       
-      const res = await fetch('http://localhost:5000/api/auth/me', {
+      const res = await fetch(`${BACKEND_URL}/api/auth/me`, {
         credentials: 'include',
       });
       if (res.ok) {
@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
       */
       
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
       */
       
-      const res = await fetch('http://localhost:5000/api/auth/signup', {
+      const res = await fetch(`${BACKEND_URL}/api/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -183,7 +183,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
       */
       
-      await fetch('http://localhost:5000/api/auth/logout', {
+      await fetch(`${BACKEND_URL}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include',
       });

@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Truck, Award, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '../components/ProductCard';
+import { BACKEND_URL } from '../data/config'; // <-- add this import
 
 const Home: React.FC = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState<string[]>([]);
 
-  const apiUrl =  'http://localhost:5000';
+  const apiUrl = BACKEND_URL; // <-- use BACKEND_URL
 
   useEffect(() => {
     const fetchProducts = async () => {

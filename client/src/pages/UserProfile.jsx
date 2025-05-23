@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { toast } from '@/components/ui/use-toast';
 import { User, ShoppingBag, Lock, MapPin, Phone, Mail, ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { BACKEND_URL } from '../data/config';
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ const UserProfile = () => {
     const fetchOrders = async () => {
       setLoadingOrders(true);
       try {
-        const res = await fetch(`http://localhost:5000/api/orders/user`, {
+        const res = await fetch(`${BACKEND_URL}/api/orders/user`, {
           credentials: 'include', // if using cookies/session
         });
         const data = await res.json();
@@ -84,7 +85,7 @@ const UserProfile = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/change-password', {
+      const response = await fetch(`${BACKEND_URL}/api/auth/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +121,7 @@ const UserProfile = () => {
   const handleOrderSelect = async (orderId) => {
     setSelectedOrderLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+      const res = await fetch(`${BACKEND_URL}/api/orders/${orderId}`, {
         credentials: 'include',
       });
       const data = await res.json();

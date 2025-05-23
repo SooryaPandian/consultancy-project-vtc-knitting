@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 import { Star } from 'lucide-react';
+import { BACKEND_URL } from '../data/config';
 
 const ProductReviews = ({ product, isAuthenticated }) => {
   const [reviewInput, setReviewInput] = useState('');
@@ -41,7 +42,7 @@ const ProductReviews = ({ product, isAuthenticated }) => {
 
     setSubmitting(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${product.id}/review`, {
+      const response = await fetch(`${BACKEND_URL}/api/products/${product.id}/review`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

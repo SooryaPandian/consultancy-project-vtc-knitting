@@ -5,6 +5,7 @@ import FilterPanel from '../components/FilterPanel';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search as SearchIcon } from 'lucide-react';
+import { BACKEND_URL } from '../data/config';
 
 const Search: React.FC = () => {
   const location = useLocation();
@@ -58,7 +59,7 @@ const Search: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/products`);
+        const response = await fetch(`${BACKEND_URL}/api/products`);
         const data = await response.json();
         setProducts(data);
 

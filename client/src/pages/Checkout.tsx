@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/use-toast';
 import { ShoppingBag, CreditCard, Wallet, ArrowLeft, Truck } from 'lucide-react';
+import { BACKEND_URL } from '../data/config';
 
 interface AddressForm {
   fullName: string;
@@ -81,7 +82,7 @@ const Checkout: React.FC = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/orders', {
+      const response = await fetch(`${BACKEND_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

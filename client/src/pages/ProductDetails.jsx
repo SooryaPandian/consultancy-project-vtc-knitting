@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import ReactMarkdown from 'react-markdown';
 import { Star, ShoppingCart, Heart, Share2, Ruler, ChevronLeft, LogIn, Timer, AlertTriangle } from 'lucide-react';
 import ProductReviews from '../components/ProductReviews';
+import { BACKEND_URL } from '../data/config'; // <-- add this import
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -31,7 +32,7 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${productId}`);
+        const response = await fetch(`${BACKEND_URL}/api/products/${productId}`);
         const data = await response.json();
         setProduct(data);
         console.log(data);

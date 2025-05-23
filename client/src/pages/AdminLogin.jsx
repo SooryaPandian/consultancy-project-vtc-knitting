@@ -6,53 +6,30 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, LogIn } from 'lucide-react';
-
-// Mock admin credentials
-const ADMIN_CREDENTIALS = {
-  email: 'admin@vtc.com',
-  password: 'admin123'
-};
+import { useAdmin } from '../components/AdminContext';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const navigate = useNavigate();
-  
+  const { adminLogin } = useAdmin();
+
   const handleAdminLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate API request
-    setTimeout(() => {
-      if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
-        // Set admin in localStorage for simplicity
-        localStorage.setItem('vtcAdmin', JSON.stringify({ 
-          role: 'admin', 
-          email: ADMIN_CREDENTIALS.email,
-          name: 'Admin User'
-        }));
 
-        toast({
-          title: 'Login Successful',
-          description: 'Welcome to Admin Dashboard',
-        });
+    const success = await adminLogin(email, password);
 
-        // Ensure navigate is called after the toast
-        setIsLoading(false); // Ensure loading state is updated before navigation
-        navigate('/admin'); // Perform navigation here
-      } else {
-        toast({
-          title: 'Login Failed',
-          description: 'Invalid admin credentials',
-          variant: 'destructive',
-        });
-        setIsLoading(false); // Update loading state in case of failure
-      }
-    }, 800);
+    setIsLoading(false);
+
+    if (success) {
+      navigate('/admin');
+    }
+    // If not successful, toast is already handled in context
   };
-  
+
   return (
     <div className="min-h-screen py-12 px-4 flex items-center justify-center bg-gray-100">
       <Card className="w-full max-w-md">

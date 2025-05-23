@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,33 +6,53 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import { Plus, X, Save, Trash2 } from 'lucide-react';
-import products from '../../data/products';
+import { BACKEND_URL } from '../../data/config';
 
 const UpdateProduct = () => {
   const { productId } = useParams();
-  console.log('Product ID:', productId);
   const navigate = useNavigate();
-  const product = products.find(p => p.id === parseInt(productId));
 
-  const [formData, setFormData] = useState({
-    name: product?.name || '',
-    category: product?.category || '',
-    type: product?.type || '',
-    description: product?.description || '',
-    basePrice: product?.basePrice || 0,
-    image: product?.image || '',
-    rating: product?.rating || 0,
-    discount: product?.discount || 0,
-    offerEndsAt: product?.offerEndsAt ? new Date(product.offerEndsAt).toISOString().split('T')[0] : '',
-    variants: product?.variants || [],
-  });
-
+  const [formData, setFormData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [newVariant, setNewVariant] = useState({
     colorName: '',
     colorCode: '',
     images: [''],
     sizes: [{ size: 'S', price: 0, stock: 0 }]
   });
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/products/${productId}`);
+        if (!res.ok) throw new Error('Failed to fetch product');
+        const product = await res.json();
+        setFormData({
+          name: product.name || '',
+          category: product.category || '',
+          type: product.type || '',
+          description: product.description || '',
+          basePrice: product.basePrice || 0,
+          image: product.image || '',
+          rating: product.rating || 0,
+          discount: product.discount || 0,
+          offerEndsAt: product.offerEndsAt ? new Date(product.offerEndsAt).toISOString().split('T')[0] : '',
+          variants: product.variants || [],
+        });
+      } catch (err) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch product details",
+          variant: "destructive",
+        });
+        setFormData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [productId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,7 +64,6 @@ const UpdateProduct = () => {
   };
 
   const handleDeleteProduct = () => {
-    // In a real app, this would make an API call
     toast({
       title: "Success",
       description: "Product deleted successfully",
@@ -72,7 +91,15 @@ const UpdateProduct = () => {
     }));
   };
 
-  if (!product) {
+  if (loading) {
+    return (
+      <div className="p-6 text-center">
+        Loading product details...
+      </div>
+    );
+  }
+
+  if (!formData) {
     return (
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4">Product not found</h2>

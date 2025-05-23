@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
+import { BACKEND_URL } from '../../data/config';
 
 const initialSize = { size: '', price: '', stock: '' };
 const initialVariant = { colorName: '', colorCode: '', images: [''], sizes: [{ ...initialSize }] };
@@ -118,14 +119,58 @@ const AddProduct = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would send the new product to your backend or update state
-    toast({
-      title: 'Product Added',
-      description: `${name} has been added successfully`,
-    });
-    navigate('/admin/products');
+
+    // Prepare product object for backend
+    const product = {
+      name,
+      category,
+      type,
+      basePrice: Number(basePrice),
+      description,
+      image,
+      discount: discount ? Number(discount) : 0,
+      offerEndsAt: offerEndsAt ? new Date(offerEndsAt).toISOString() : null,
+      variants: variants.map(v => ({
+        colorName: v.colorName,
+        colorCode: v.colorCode,
+        images: v.images,
+        sizes: v.sizes.map(s => ({
+          size: s.size,
+          price: Number(s.price),
+          stock: Number(s.stock)
+        }))
+      }))
+    };
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/products`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(product),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Failed to add product');
+      }
+
+      toast({
+        title: 'Product Added',
+        description: `${name} has been added successfully`,
+      });
+      navigate('/admin/products');
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: err.message || 'Failed to add product',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (

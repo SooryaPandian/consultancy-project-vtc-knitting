@@ -21,8 +21,8 @@ router.get("/user", verifyToken, getOrdersByUser); // Get all orders for the log
 router.get("/:id", verifyToken, getOrderById); // Get order by ID
 
 // Admin routes
-router.get("/", verifyToken, verifyAdmin, getAllOrders); // Get all orders
-router.put("/:id", verifyToken, verifyAdmin, updateOrderStatus); // Update order status
-router.delete("/:id", verifyToken, verifyAdmin, deleteOrder); // Delete an order
+router.get("/",  verifyAdmin, getAllOrders); // Get all orders
+router.put("/:id",  verifyAdmin, updateOrderStatus); // Update order status
+router.delete("/:id",  verifyAdmin, deleteOrder); // Delete an order
 
 module.exports = router;

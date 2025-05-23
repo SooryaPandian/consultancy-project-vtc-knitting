@@ -1,14 +1,13 @@
-
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAdmin } from './AdminContext';
 
 const AdminRoute = ({ element }) => {
-  const { isAdmin, isAdminLoading } = useAdmin();
+  const { isAdminAuthenticated, loading } = useAdmin();
   const location = useLocation();
   
   // Show loading while checking admin status
-  if (isAdminLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-vtc-red"></div>
@@ -17,7 +16,7 @@ const AdminRoute = ({ element }) => {
   }
   
   // Redirect to admin login if not an admin
-  if (!isAdmin) {
+  if (!isAdminAuthenticated) {
     return <Navigate to="/admin/login" state={{ from: location }} replace />;
   }
   

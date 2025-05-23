@@ -14,6 +14,7 @@ const getAllProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
+
     const product = await Product.findOne({ id });
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -62,6 +63,7 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("Deleting product with id:", id);
     const deletedProduct = await Product.findOneAndDelete({ id });
     if (!deletedProduct) {
       return res.status(404).json({ message: "Product not found" });
@@ -115,6 +117,48 @@ const addProductReview = async (req, res) => {
   }
 };
 
+// Create a new product (Admin functionality)
+const createProduct = async (req, res) => {
+  try {
+    const {
+      name,
+      category,
+      type,
+      basePrice,
+      description,
+      image,
+      discount,
+      offerEndsAt,
+      variants,
+    } = req.body;
+
+    // Generate a unique integer id using timestamp and random number
+    const id = parseInt(
+      Date.now().toString() + Math.floor(Math.random() * 1000).toString()
+    );
+
+    const newProduct = new Product({
+      id, // add the generated id
+      name,
+      category,
+      type,
+      basePrice,
+      description,
+      image,
+      discount,
+      offerEndsAt,
+      variants,
+    });
+
+    await newProduct.save();
+    res
+      .status(201)
+      .json({ message: "Product created successfully", product: newProduct });
+  } catch (error) {
+    res.status(500).json({ message: "Error creating product", error });
+  }
+};
+
 // Export the controller functions
 module.exports = {
   getAllProducts,
@@ -123,4 +167,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   addProductReview, // export the new controller
+  createProduct,
 };

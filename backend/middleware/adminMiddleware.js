@@ -2,7 +2,9 @@ const jwt = require("jsonwebtoken");
 
 const verifyAdmin = (req, res, next) => {
   const token = req.cookies.token;
+  console.log("Delet request");
   if (!token) {
+    
     return res
       .status(401)
       .json({ message: "Access denied. No token provided." });

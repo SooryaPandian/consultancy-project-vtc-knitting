@@ -85,6 +85,40 @@ const login = async (req, res) => {
   }
 };
 
+// Admin login (static credentials)
+const adminLogin = async (req, res) => {
+  const { email, password } = req.body;
+  // Static admin credentials
+  const ADMIN_EMAIL = "admin@gmail.com";
+  const ADMIN_PASSWORD = "admin123";
+
+  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ message: "Invalid admin credentials" });
+  }
+
+  // Generate JWT with is_admin: true
+  const token = jwt.sign(
+    { email: ADMIN_EMAIL, is_admin: true },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+
+  res
+    .cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+    })
+    .status(200)
+    .json({
+      message: "Admin login successful",
+      admin: {
+        email: ADMIN_EMAIL,
+        is_admin: true,
+      },
+    });
+};
+
 // Change password (requires JWT and correct current password)
 const changePassword = async (req, res) => {
   try {
@@ -119,4 +153,5 @@ module.exports = {
   register,
   login,
   changePassword,
+  adminLogin,
 };

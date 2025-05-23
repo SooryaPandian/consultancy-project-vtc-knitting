@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from '@/components/ui/use-toast';
 import { Search, FileDown, Filter, Eye, Truck, XCircle, CheckCircle, Clock } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { BACKEND_URL } from '../../data/config';
 
 const Orders = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,11 +15,24 @@ const Orders = () => {
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   
   useEffect(() => {
-    // Load orders from localStorage for demo
-    const savedOrders = JSON.parse(localStorage.getItem('vtcOrders') || '[]');
-    // If no saved orders, use the mock data
-    const initialOrders = savedOrders.length > 0 ? savedOrders : mockOrders;
-    setOrders(initialOrders);
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/orders`, {
+          credentials: 'include',
+        });
+        if (!res.ok) throw new Error('Failed to fetch orders');
+        const data = await res.json();
+        setOrders(data);
+      } catch (err) {
+        toast({
+          title: 'Error',
+          description: 'Failed to fetch orders from backend',
+          variant: 'destructive',
+        });
+        setOrders([]);
+      }
+    };
+    fetchOrders();
   }, []);
   
   const statusColors = {
@@ -385,123 +398,5 @@ const Orders = () => {
     </div>
   );
 };
-
-// Mock order data to use if localStorage is empty
-const mockOrders = [
-  { 
-    id: 'ORD-7893', 
-    customer: 'Rajesh Kumar', 
-    email: 'rajesh@example.com',
-    date: '2025-04-23', 
-    amount: 3540, 
-    items: 4,
-    status: 'Processing',
-    paymentMethod: 'cod',
-    address: {
-      fullName: 'Rajesh Kumar',
-      phoneNumber: '9876543210',
-      addressLine1: '42 Sardar Patel Road',
-      addressLine2: 'Apartment 301',
-      city: 'Mumbai',
-      state: 'Maharashtra',
-      pincode: '400001'
-    }
-  },
-  { 
-    id: 'ORD-7892', 
-    customer: 'Anjali Singh', 
-    email: 'anjali@example.com',
-    date: '2025-04-22', 
-    amount: 2890, 
-    items: 3,
-    status: 'Shipped',
-    paymentMethod: 'online',
-    address: {
-      fullName: 'Anjali Singh',
-      phoneNumber: '8765432109',
-      addressLine1: '15 MG Road',
-      addressLine2: '',
-      city: 'Bangalore',
-      state: 'Karnataka',
-      pincode: '560001'
-    }
-  },
-  { 
-    id: 'ORD-7891', 
-    customer: 'Mohan Das', 
-    email: 'mohan@example.com',
-    date: '2025-04-22', 
-    amount: 1240, 
-    items: 2,
-    status: 'Delivered',
-    paymentMethod: 'cod',
-    address: {
-      fullName: 'Mohan Das',
-      phoneNumber: '7654321098',
-      addressLine1: '78 Park Street',
-      addressLine2: 'Floor 2',
-      city: 'Kolkata',
-      state: 'West Bengal',
-      pincode: '700001'
-    }
-  },
-  { 
-    id: 'ORD-7890', 
-    customer: 'Priya Sharma', 
-    email: 'priya@example.com',
-    date: '2025-04-21', 
-    amount: 5670, 
-    items: 5,
-    status: 'Pending',
-    paymentMethod: 'online',
-    address: {
-      fullName: 'Priya Sharma',
-      phoneNumber: '6543210987',
-      addressLine1: '22 Rajpath',
-      addressLine2: '',
-      city: 'New Delhi',
-      state: 'Delhi',
-      pincode: '110001'
-    }
-  },
-  { 
-    id: 'ORD-7889', 
-    customer: 'Amit Singh', 
-    email: 'amit@example.com',
-    date: '2025-04-20', 
-    amount: 980, 
-    items: 1,
-    status: 'Processing',
-    paymentMethod: 'cod',
-    address: {
-      fullName: 'Amit Singh',
-      phoneNumber: '5432109876',
-      addressLine1: '11 Ring Road',
-      addressLine2: 'Sector 18',
-      city: 'Noida',
-      state: 'Uttar Pradesh',
-      pincode: '201301'
-    }
-  },
-  { 
-    id: 'ORD-7888', 
-    customer: 'Neha Gupta', 
-    email: 'neha@example.com',
-    date: '2025-04-19', 
-    amount: 3210, 
-    items: 3,
-    status: 'Cancelled',
-    paymentMethod: 'online',
-    address: {
-      fullName: 'Neha Gupta',
-      phoneNumber: '4321098765',
-      addressLine1: '7 FC Road',
-      addressLine2: '',
-      city: 'Pune',
-      state: 'Maharashtra',
-      pincode: '411001'
-    }
-  }
-];
 
 export default Orders;
